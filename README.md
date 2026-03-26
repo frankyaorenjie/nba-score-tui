@@ -1,6 +1,10 @@
 # nba-score-tui
 
-A terminal UI (TUI) application that displays live NBA scores, standings, and game details with auto-refresh.
+A terminal UI (TUI) application that displays live NBA scores, standings, and game details with auto-refresh. Mac menubar feature is just supported!
+<img width="798" height="1172" alt="image" src="https://github.com/user-attachments/assets/2df9c99c-0d3a-4aa7-a038-af1bdb6e82a3" />
+<img width="2400" height="1584" alt="image" src="https://github.com/user-attachments/assets/847a7292-06bc-44e1-a88f-ba767a4beeab" />
+
+
 
 ## Current Release
 
