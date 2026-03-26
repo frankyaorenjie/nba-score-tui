@@ -67,6 +67,42 @@ npm start
 node index.js
 ```
 
+## macOS Menubar App
+
+This repo now also includes a native macOS menubar app under [`macos-menubar`](./macos-menubar) that uses the same live NBA scoreboard feed as the TUI.
+
+Requirements:
+- macOS 13+
+- Xcode Command Line Tools / Swift 6
+
+Run it directly from the repo:
+
+```bash
+npm run menubar
+# or
+swift run --package-path macos-menubar NBAScoreMenubar
+```
+
+Build the Swift package:
+
+```bash
+npm run menubar:build
+```
+
+Build a standalone `.app` bundle in `dist/NBAScoreMenubar-<arch>.app`:
+
+```bash
+npm run menubar:bundle
+```
+
+The menubar app:
+- Polls the official NBA live scoreboard every 20 seconds
+- Shows today's games in a native `MenuBarExtra` window
+- Lets you star games to pin them to the menu bar
+- Rotates through starred games in the menu bar every 6 seconds
+- Uses a simpler list-based window and menu layout
+- Opens the full NBA.com scoreboard from the menu
+
 ## Controls
 
 ### Main Views (Scores / Standings / Transactions)

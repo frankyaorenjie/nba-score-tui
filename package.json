@@ -8,7 +8,10 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "menubar": "swift run --package-path macos-menubar NBAScoreMenubar",
+    "menubar:build": "swift build --package-path macos-menubar",
+    "menubar:bundle": "./scripts/build-menubar-app.sh"
   },
   "devDependencies": {
     "nodemon": "^3.0.0"
