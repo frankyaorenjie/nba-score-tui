@@ -14,7 +14,7 @@ final class ScoreboardStore: ObservableObject {
 
     private var refreshTask: Task<Void, Never>?
     private var rotationTask: Task<Void, Never>?
-    private var activeFavoriteIndex = 0
+    private var activeMenuBarGameIndex = 0
 
     init() {
         let savedFavorites = UserDefaults.standard.stringArray(forKey: Self.favoriteGameIDsKey) ?? []
@@ -33,11 +33,19 @@ final class ScoreboardStore: ObservableObject {
         !favoriteGames.isEmpty
     }
 
+    private var menuBarGames: [Game] {
+        if hasFavorites {
+            return favoriteGames
+        }
+
+        return scoreboard?.games ?? []
+    }
+
     var favoriteSummaryText: String {
         let count = favoriteGames.count
 
         if count == 0 {
-            return "Star a game to pin it to the menu bar."
+            return "No starred games. All games rotate in the menu bar every 6 seconds."
         }
 
         if count == 1 {
@@ -72,7 +80,7 @@ final class ScoreboardStore: ObservableObject {
 
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(6))
-                advanceFavoriteRotation()
+                advanceMenuBarRotation()
             }
         }
     }
@@ -89,7 +97,7 @@ final class ScoreboardStore: ObservableObject {
             scoreboard = try await ScoreboardService.fetchScoreboard()
             lastUpdated = Date()
             errorMessage = nil
-            syncFavoriteSelection()
+            syncMenuBarSelection()
             updateMenuBarLabel()
         } catch {
             if scoreboard == nil {
@@ -110,51 +118,51 @@ final class ScoreboardStore: ObservableObject {
         if favoriteGameIDs.contains(gameID) {
             favoriteGameIDs.remove(gameID)
             persistFavorites()
-            syncFavoriteSelection()
+            syncMenuBarSelection(preferredGameID: gameID)
             updateMenuBarLabel()
             return
         }
 
         favoriteGameIDs.insert(gameID)
         persistFavorites()
-        syncFavoriteSelection(preferredGameID: gameID)
+        syncMenuBarSelection(preferredGameID: gameID)
         updateMenuBarLabel()
     }
 
-    func advanceFavoriteRotation() {
-        let favorites = favoriteGames
-        guard favorites.count > 1 else {
+    func advanceMenuBarRotation() {
+        let games = menuBarGames
+        guard games.count > 1 else {
             return
         }
 
-        activeFavoriteIndex = (activeFavoriteIndex + 1) % favorites.count
+        activeMenuBarGameIndex = (activeMenuBarGameIndex + 1) % games.count
         updateMenuBarLabel()
     }
 
-    private func syncFavoriteSelection(preferredGameID: String? = nil) {
-        let favorites = favoriteGames
+    private func syncMenuBarSelection(preferredGameID: String? = nil) {
+        let games = menuBarGames
 
-        guard !favorites.isEmpty else {
-            activeFavoriteIndex = 0
+        guard !games.isEmpty else {
+            activeMenuBarGameIndex = 0
             return
         }
 
         if let preferredGameID,
-           let preferredIndex = favorites.firstIndex(where: { $0.id == preferredGameID }) {
-            activeFavoriteIndex = preferredIndex
+           let preferredIndex = games.firstIndex(where: { $0.id == preferredGameID }) {
+            activeMenuBarGameIndex = preferredIndex
             return
         }
 
-        if activeFavoriteIndex >= favorites.count {
-            activeFavoriteIndex = 0
+        if activeMenuBarGameIndex >= games.count {
+            activeMenuBarGameIndex = 0
         }
     }
 
     private func updateMenuBarLabel() {
         menuBarLabel = GameFormatting.menuBarLabel(
             for: scoreboard,
-            favorites: favoriteGames,
-            favoriteIndex: activeFavoriteIndex
+            games: menuBarGames,
+            gameIndex: activeMenuBarGameIndex
         )
     }
 

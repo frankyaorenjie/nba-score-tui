@@ -2,6 +2,14 @@
 
 A terminal UI (TUI) application that displays live NBA scores, standings, and game details with auto-refresh.
 
+## Current Release
+
+- Version: `1.0.0`
+- GitHub release: [`v1.0.0`](https://github.com/frankyaorenjie/nba-score-tui/releases/tag/v1.0.0)
+- Apple Silicon macOS download: [`NBAScoreMenubar-v1.0.0-arm64.zip`](https://github.com/frankyaorenjie/nba-score-tui/releases/download/v1.0.0/NBAScoreMenubar-v1.0.0-arm64.zip)
+- SHA-256 checksum: [`NBAScoreMenubar-v1.0.0-arm64.zip.sha256`](https://github.com/frankyaorenjie/nba-score-tui/releases/download/v1.0.0/NBAScoreMenubar-v1.0.0-arm64.zip.sha256)
+- Menubar app requirement: macOS 13+
+
 ## Features
 
 ### Scores View
@@ -99,7 +107,7 @@ The menubar app:
 - Polls the official NBA live scoreboard every 20 seconds
 - Shows today's games in a native `MenuBarExtra` window
 - Lets you star games to pin them to the menu bar
-- Rotates through starred games in the menu bar every 6 seconds
+- Rotates through starred games in the menu bar every 6 seconds, or all games when none are starred
 - Uses a simpler list-based window and menu layout
 - Opens the full NBA.com scoreboard from the menu
 

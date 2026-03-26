@@ -95,13 +95,13 @@ enum GameFormatting {
         return MenuBarLabelContent(topLine: "NBA", bottomLine: "FINAL")
     }
 
-    static func menuBarLabel(for scoreboard: Scoreboard?, favorites: [Game], favoriteIndex: Int) -> MenuBarLabelContent {
-        guard !favorites.isEmpty else {
+    static func menuBarLabel(for scoreboard: Scoreboard?, games: [Game], gameIndex: Int) -> MenuBarLabelContent {
+        guard !games.isEmpty else {
             return menuBarLabel(for: scoreboard)
         }
 
-        let index = min(max(favoriteIndex, 0), favorites.count - 1)
-        return menuBarLabel(for: favorites[index])
+        let index = min(max(gameIndex, 0), games.count - 1)
+        return menuBarLabel(for: games[index])
     }
 
     static func menuBarLabel(for game: Game) -> MenuBarLabelContent {
