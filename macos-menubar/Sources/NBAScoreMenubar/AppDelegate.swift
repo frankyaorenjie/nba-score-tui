@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPopoverDelegate {
     private let store = ScoreboardStore()
     private let preferences = AppPreferences()
     private let popover = NSPopover()
@@ -13,6 +13,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var detailStore = GameDetailStore()
     private var detailWindow: NSWindow?
     private var settingsWindow: NSWindow?
+    private var localEventMonitor: Any?
+    private var globalEventMonitor: Any?
     private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -32,6 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private func configurePopover() {
         popover.behavior = .transient
+        popover.delegate = self
         popover.contentSize = NSSize(width: 368, height: 540)
         popover.contentViewController = NSHostingController(
             rootView: MenuBarContentView(
@@ -137,6 +140,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             popover.performClose(sender)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            installPopoverEventMonitors()
             popover.contentViewController?.view.window?.becomeKey()
         }
     }
@@ -236,6 +240,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc
     private func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+
+    func popoverDidClose(_ notification: Notification) {
+        removePopoverEventMonitors()
+    }
+
+    private func installPopoverEventMonitors() {
+        removePopoverEventMonitors()
+
+        localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            self?.handlePopoverInteraction(event)
+            return event
+        }
+
+        globalEventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            Task { @MainActor in
+                self?.closePopoverIfShown()
+            }
+        }
+    }
+
+    private func removePopoverEventMonitors() {
+        if let localEventMonitor {
+            NSEvent.removeMonitor(localEventMonitor)
+            self.localEventMonitor = nil
+        }
+
+        if let globalEventMonitor {
+            NSEvent.removeMonitor(globalEventMonitor)
+            self.globalEventMonitor = nil
+        }
+    }
+
+    private func handlePopoverInteraction(_ event: NSEvent) {
+        guard popover.isShown else {
+            return
+        }
+
+        let popoverWindow = popover.contentViewController?.view.window
+        let statusWindow = statusItem?.button?.window
+
+        if event.window !== popoverWindow && event.window !== statusWindow {
+            closePopoverIfShown()
+        }
+    }
+
+    private func closePopoverIfShown() {
+        guard popover.isShown else {
+            return
+        }
+
+        popover.performClose(nil)
     }
 
     func windowWillClose(_ notification: Notification) {
