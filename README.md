@@ -1,10 +1,15 @@
 # nba-score-tui
 
-A terminal UI (TUI) application that displays live NBA scores, standings, and game details with auto-refresh. Mac menubar feature is just supported!
-<img width="798" height="1172" alt="image" src="https://github.com/user-attachments/assets/2df9c99c-0d3a-4aa7-a038-af1bdb6e82a3" />
-<img width="2400" height="1584" alt="image" src="https://github.com/user-attachments/assets/847a7292-06bc-44e1-a88f-ba767a4beeab" />
+`nba-score-tui` is an NBA scoreboard repo with two user-facing apps built on the same live game data:
+- a keyboard-driven terminal UI
+- a native macOS menubar app
 
+## Choose Your App
 
+| App | Best for | Highlights |
+| --- | --- | --- |
+| Terminal UI | Staying in the terminal | Live scores, standings, transactions, watch list alerts, game flow, box score, self-update |
+| macOS Menubar App | Keeping today's games visible on macOS | Menu bar rotation, starred games, native popover, detail window, startup settings |
 
 ## Current Release
 
@@ -12,159 +17,150 @@ A terminal UI (TUI) application that displays live NBA scores, standings, and ga
 - GitHub release: [`v1.0.0`](https://github.com/frankyaorenjie/nba-score-tui/releases/tag/v1.0.0)
 - Apple Silicon macOS download: [`NBAScoreMenubar-v1.0.0-arm64.zip`](https://github.com/frankyaorenjie/nba-score-tui/releases/download/v1.0.0/NBAScoreMenubar-v1.0.0-arm64.zip)
 - SHA-256 checksum: [`NBAScoreMenubar-v1.0.0-arm64.zip.sha256`](https://github.com/frankyaorenjie/nba-score-tui/releases/download/v1.0.0/NBAScoreMenubar-v1.0.0-arm64.zip.sha256)
+- The downloadable release assets are for the macOS menubar app.
+- The TUI runs from source with `npm start`.
 - Menubar app requirement: macOS 13+
 
-## Features
+## Quick Start
 
-### Scores View
-- Live NBA scores updated every 5 seconds
-- Clean single-row layout for each game
-- Team abbreviations (GSW, LAL, BOS, etc.)
-- Game status: scheduled time, live quarter/clock, or final
-- Top performer for each game (highest scorer)
-- Color-coded display:
-  - Leading team in bold white
-  - Trailing team in gray
-  - Live games clock in red
-  - Top performer in yellow
+### Terminal UI
 
-### Standings View
-- Eastern and Western Conference standings
-- Updated every 60 seconds
-- Color-coded playoff positions:
-  - Green: Playoff spots (1-6)
-  - Yellow: Play-in tournament (7-10)
-  - White: Lottery teams (11-15)
-- Shows wins, losses, win percentage, and games behind
-
-### Transactions View
-- All NBA transactions from ESPN (last 3 months)
-- Updated every 60 seconds
-- Grouped by date, showing team and transaction details
-- Color-coded: Yellow (trades), Green (signings), Red (waivers)
-- **Player Watch List**: Subscribe to players to get notifications
-  - Tab to switch between transactions and watch list panels
-  - Search players by name with autocomplete
-  - Preview notification when subscribing to confirm setup
-  - Desktop notifications when subscribed players appear in transactions
-  - Subscriptions saved to `~/.nba-score-tui-subscriptions.json`
-
-### Game Detail View
-- Game flow chart showing score differential over time
-- Lead changes tracking
-- Play-by-play feed (latest 5 plays)
-- Full box score with player statistics
-- Switch between Game Flow and Box Score sections with Tab
-- Active section highlighted with yellow border
-
-### Auto-Update
-- Automatically checks for updates from GitHub every hour
-- Desktop notification when update is available
-- Press `u` to update, then `r` to restart with new version
-- Manual update check also available by pressing `u`
-
-## Installation
+Requirements:
+- Node.js
+- npm
 
 ```bash
 git clone https://github.com/frankyaorenjie/nba-score-tui.git
 cd nba-score-tui
 npm install
-```
-
-## Usage
-
-```bash
 npm start
-# or
-node index.js
 ```
 
-## macOS Menubar App
+`node index.js` runs the same app directly.
 
-This repo now also includes a native macOS menubar app under [`macos-menubar`](./macos-menubar) that uses the same live NBA scoreboard feed as the TUI.
+### macOS Menubar App
 
 Requirements:
 - macOS 13+
 - Xcode Command Line Tools / Swift 6
 
-Run it directly from the repo:
+Download the prebuilt Apple Silicon build from the current release, or run it from source:
 
 ```bash
+git clone https://github.com/frankyaorenjie/nba-score-tui.git
+cd nba-score-tui
+npm install
 npm run menubar
-# or
-swift run --package-path macos-menubar NBAScoreMenubar
 ```
 
-Build the Swift package:
+Build commands:
 
 ```bash
 npm run menubar:build
-```
-
-Build a standalone `.app` bundle in `dist/NBAScoreMenubar-<arch>.app`:
-
-```bash
 npm run menubar:bundle
 ```
 
-The menubar app:
-- Polls the official NBA live scoreboard every 20 seconds
-- Shows today's games in a native `MenuBarExtra` window
+`npm run menubar:bundle` creates `dist/NBAScoreMenubar-<arch>.app`.
+
+## macOS Menubar App
+
+The menubar app is a native SwiftUI/AppKit companion for keeping today's NBA slate visible without living in the terminal.
+
+### Highlights
+
+- Polls the live NBA scoreboard every 20 seconds
+- Shows today's games in a native menu bar popover
 - Lets you star games to pin them to the menu bar
-- Rotates through starred games in the menu bar every 6 seconds, or all games when none are starred
-- Uses a simpler list-based window and menu layout
-- Opens the full NBA.com scoreboard from the menu
+- Rotates starred games every 6 seconds, or rotates all games when none are starred
+- Opens a separate detail window with game flow, recent plays, and full box score
+- Includes footer actions for manual refresh, the NBA.com scoreboard, and quit
+- Supports a right-click menu with `Settings`, `About`, and `Quit`
+- Settings include `Start at login` and `Start and hide`
+- Stores pinned games and settings in `UserDefaults`
 
-## Controls
+### Interactions
 
-### Main Views (Scores / Standings / Transactions)
+- Left click the status item to open or close the scoreboard popover
+- Click the star icon to pin or unpin a game in the menu bar rotation
+- Click `Detail` to open the separate game detail window
+- Right click the status item for `Settings`, `About`, and `Quit`
+- Use `Settings` to control `Start at login` and `Start and hide`
+
+### macOS Menubar App Screenshots
+
+<img width="798" height="1172" alt="macOS menubar scoreboard popover" src="https://github.com/user-attachments/assets/2df9c99c-0d3a-4aa7-a038-af1bdb6e82a3" />
+
+<img width="2400" height="1584" alt="macOS menubar game detail window" src="https://github.com/user-attachments/assets/847a7292-06bc-44e1-a88f-ba767a4beeab" />
+
+## Terminal UI
+
+The TUI is the keyboard-first experience for following scores, standings, transactions, and deeper game detail from the terminal.
+
+### Highlights
+
+- Scores view refreshes every 5 seconds with live status and top performers
+- Standings view refreshes every 60 seconds for both conferences
+- Transactions view refreshes every 60 seconds and includes a player watch list
+- Watch list subscriptions trigger desktop notifications and persist in `~/.nba-score-tui-subscriptions.json`
+- Game detail view shows score differential, lead changes, recent plays, and full box scores
+- Auto-update checks GitHub every hour and pulls from `origin/main`
+
+### Controls
+
+#### Main Views (Scores / Standings / Transactions)
+
 | Key | Action |
-|-----|--------|
+| --- | --- |
 | `1` | Switch to Scores view |
 | `2` | Switch to Standings view |
 | `3` | Switch to Transactions view |
 | `h` / `←` | Switch to previous view |
 | `l` / `→` | Switch to next view |
-
 | `j` / `↓` | Move down / Scroll |
 | `k` / `↑` | Move up / Scroll |
-| `Space` / `Enter` | Open game details (from Scores) |
+| `Space` / `Enter` | Open game details from Scores |
 | `u` | Check for updates / Install update |
-| `q` | Quit (with confirmation) |
+| `q` | Quit with confirmation |
 | `Ctrl+C` | Quit immediately |
 
-### Transactions View (Watch List)
+#### Transactions View (Watch List)
+
 | Key | Action |
-|-----|--------|
+| --- | --- |
 | `Tab` | Switch between transactions and watch list panels |
 | `Enter` | Search players / Subscribe / Remove from list |
 | `d` / `Backspace` | Remove selected player from watch list |
 | `Esc` | Cancel search / Go back |
 
-### Game Detail View
+#### Game Detail View
+
 | Key | Action |
-|-----|--------|
+| --- | --- |
 | `Tab` | Switch focus between Game Flow and Box Score |
 | `j` / `↓` | Scroll down in focused section |
 | `k` / `↑` | Scroll up in focused section |
 | `q` / `Esc` | Go back to main view |
 
-### Quit Confirmation Dialog
+#### Quit Confirmation Dialog
+
 | Key | Action |
-|-----|--------|
+| --- | --- |
 | `Y` / `Q` / `Enter` | Confirm quit |
 | `N` / `Esc` | Cancel |
 
-## Screenshots
+### Terminal UI Screenshots
 
-### Scores View
-<img width="1520" height="638" alt="image" src="https://github.com/user-attachments/assets/b1d5a2ce-9c79-440d-a65f-eece76433f84" />
+#### Scores View
 
-### Standings View
-<img width="1410" height="960" alt="image" src="https://github.com/user-attachments/assets/bff130d9-5395-4b09-83c7-b804a9d14b79" />
+<img width="1520" height="638" alt="Terminal UI scores view" src="https://github.com/user-attachments/assets/b1d5a2ce-9c79-440d-a65f-eece76433f84" />
 
-### Transactions View
-```
+#### Standings View
+
+<img width="1410" height="960" alt="Terminal UI standings view" src="https://github.com/user-attachments/assets/bff130d9-5395-4b09-83c7-b804a9d14b79" />
+
+#### Transactions View
+
+```text
  [1] Scores   [2] Standings   [3] Transactions
 
 ┌─ Transactions ─────────────────────────┐┌─ Watch List ────────────┐
@@ -183,15 +179,21 @@ The menubar app:
   ● 14:32:15 | Tab switch panels | Enter subscribe/remove | q quit
 ```
 
-### Game Detail View
-<img width="1546" height="1812" alt="image" src="https://github.com/user-attachments/assets/1d120c79-2e6f-46d9-8e12-2c311c5007a8" />
+#### Game Detail View
+
+<img width="1546" height="1812" alt="Terminal UI game detail view" src="https://github.com/user-attachments/assets/1d120c79-2e6f-46d9-8e12-2c311c5007a8" />
 
 ## Data Sources
 
-- Scores: Official NBA API
+- Scores: Official NBA live scoreboard and box score APIs
 - Standings: ESPN API
 - Transactions: ESPN Transactions API
 - Player Search: ESPN Search API
+
+## Persistence
+
+- TUI player subscriptions: `~/.nba-score-tui-subscriptions.json`
+- Menubar pinned games and settings: `UserDefaults`
 
 ## License
 
